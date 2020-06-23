@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Play";
+}
+@model PlayActivity
+
+<nav class="navbar">
+    <a href="/logout"><button class="btn btn-danger">Logout</button></a>
+    <a href="/home"><button class="btn btn-primary">Home</button></a>
+</nav>
+
+
+<div class="card" style="width: 400px;">
+    <div class="card-body">
+        <h1 class="card-title">@Model.Title</h1>
+        <h3 class="card-title">Organized by: @Model.Organizer.FirstName</h3>
+        <p class="card-text">@Model.Description</p>
+        <p class="card-text">Participants:</p>
+        <ul class="list-group">
+        @foreach( var p in Model.Friends)
+        {
+            <li class="list-group-item">@p.Person.FirstName</li>
+        }
+        </ul>
+        @if(ViewBag.User.UserId == Model.Organizer.UserId)
+                {
+                    <a href="/activity/@Model.PlayActivityId/delete" class="btn btn-warning">Delete</a>
+                }
+                else
+                {
+                    //Query to see if they are watching the movie
+                    if(Model.Friends.Any(x => x.UserId == ViewBag.User.UserId))
+                    {
+                        <a class="btn btn-outline-dark" asp-action="ToggleActivity" asp-route-playActivityId="@Model.PlayActivityId" asp-route-status="leave" >Leave</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-dark" asp-action="ToggleActivity" asp-route-playActivityId="@Model.PlayActivityId"  asp-route-status="join" >Join</a>
+                    }
+                }
+    </div>
+</div>
+

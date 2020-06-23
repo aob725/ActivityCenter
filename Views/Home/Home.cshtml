@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Home";
+}
+@model List<PlayActivity>
+
+<h1>Dojo Activity Center</h1>
+<p>Welcome @ViewBag.User.FirstName</p>
+<a href="/logout"><button class="btn btn-danger">Logout</button></a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Activity</th>
+            <th>Date and Time</th>
+            <th>Event Coordinator</th>
+            <th>No. of Participants</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(PlayActivity p in Model)
+        {
+        <tr>
+            <td><a href="/activity/@p.PlayActivityId">@p.Title</a></td>
+            <td>@p.Time.ToLongDateString() @@ @p.Time.ToShortTimeString()</td>
+            <td>@p.Organizer.FirstName</td>
+            <td>@p.Friends.Count</td>
+            <td>
+                @if(ViewBag.User.UserId == p.Organizer.UserId)
+                {
+                    <a href="/activity/@p.PlayActivityId/delete" class="btn btn-warning">Delete</a>
+                }
+                else
+                {
+                    //Query to see if they are watching the movie
+                    if(p.Friends.Any(x => x.UserId == ViewBag.User.UserId))
+                    {
+                        <a class="btn btn-outline-dark" asp-action="ToggleActivity" asp-route-playActivityId="@p.PlayActivityId" asp-route-status="leave" >Leave</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-dark" asp-action="ToggleActivity" asp-route-playActivityId="@p.PlayActivityId"  asp-route-status="join" >Join</a>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<a href="/new"><button class="btn btn-primary">Add New Activity</button></a>
